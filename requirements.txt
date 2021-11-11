@@ -1,0 +1,4 @@
+fpdf==1.7.2
+lxml==4.6.4
+Python-OOXML==0.13
+six==1.16.0
