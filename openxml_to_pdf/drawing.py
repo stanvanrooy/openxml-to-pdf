@@ -7,6 +7,7 @@ from docx.table import Table, _Row, _Cell
 from docx.text.paragraph import Paragraph
 
 from openxml_to_pdf import styles
+from openxml_to_pdf import debug
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -39,7 +40,11 @@ def draw_paragraph(pdf: FPDF, paragraph: Paragraph):
     if paragraph.paragraph_format.page_break_before:
         pdf.add_page()
 
+    if not paragraph.runs:
+        return
+
     for run in paragraph.runs:
         text = styles.apply_font(pdf, run.text, run.font)
-        pdf.write(10, text)
+        pdf.write(8, text)
+    pdf.ln()
 
