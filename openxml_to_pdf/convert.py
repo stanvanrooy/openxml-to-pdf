@@ -29,13 +29,16 @@ def iter_elements(parent):
             yield Table(child, parent)
 
 def convert(filename):
+    doc = docx.Document(filename)
     pdf = drawing.init()
 
-    for elem in iter_elements(docx.Document('./20212946.docx')):
+    pdf.set_author(doc.core_properties.author)
+    
+    for elem in iter_elements(doc):
         if isinstance(elem, Paragraph):
-            drawing.draw_paragraph(pdf, elem)
+            drawing.draw_paragraph(doc, pdf, elem)
         elif isinstance(elem, Table):
-            drawing.draw_table(pdf, elem)
+            drawing.draw_table(doc, pdf, elem)
         else:
             raise ValueError("something's not right")
 

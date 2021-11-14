@@ -1,21 +1,24 @@
 from typing import Optional
 from fpdf import FPDF
 
+from docx.document import Document
 from docx.text.font import Font
 from docx.shared import RGBColor
 from docx.enum.text import WD_COLOR_INDEX
 
 from openxml_to_pdf import helpers
 
-def apply_font(pdf: FPDF, text: str, font: Font) -> str:
+def apply_font(doc: Document, pdf: FPDF, text: str, font: Font) -> str:
     if font.all_caps:
         text = text.upper()
 
-    color = _get_color(font.color.rgb)
-    fill = _get_fill(font.highlight_color)
-    style = _get_style(font)
-    size = font.size.pt if font.size else 12
-    family = (font.name or 'Arial').lower()
+    default = doc.styles.default(2)
+    
+    color = _get_color(default.font.color.rgb) or _get_color(font.color.rgb)
+    fill = _get_fill(default.font.highlight_color) or _get_fill(font.highlight_color)
+    style = _get_style(default.font) or _get_style(font) or ''
+    size = (default.font.size.pt if default.font.size else None) or (font.size.pt if font.size else None) or 12
+    family = (default.font.name or font.name or 'Arial').lower()
     
     try:
         pdf.set_font(family, style, size)
@@ -42,7 +45,7 @@ def _get_fill(color: Optional[WD_COLOR_INDEX]) -> Optional[dict]:
         return None
     return helpers.convert_wd_color_index(color)
 
-def _get_style(font: Font) -> str:
+def _get_style(font: Font) -> Optional[str]:
     style = ''
     if font.bold:
         style += 'b'
@@ -50,5 +53,5 @@ def _get_style(font: Font) -> str:
         style += 'i'
     if font.underline:
         style += 'u'
-    return style
+    return style if style else None
 

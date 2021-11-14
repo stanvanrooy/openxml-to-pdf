@@ -3,6 +3,7 @@ import logging
 
 from fpdf import FPDF
 
+from docx.document import Document
 from docx.table import Table, _Row, _Cell
 from docx.text.paragraph import Paragraph
 
@@ -23,7 +24,7 @@ def init():
     pdf.set_font('Times', '', 10.0)
     return pdf
 
-def draw_table(pdf: FPDF, table: Table):
+def draw_table(doc: Document, pdf: FPDF, table: Table):
     for row in table.rows:
         draw_row(pdf, row)
 
@@ -35,7 +36,7 @@ def draw_cell(pdf: FPDF, cell: _Cell):
     return
     # print(cell)
 
-def draw_paragraph(pdf: FPDF, paragraph: Paragraph):
+def draw_paragraph(doc: Document, pdf: FPDF, paragraph: Paragraph):
     # If this paragraph is after a page break, add a new page.
     if paragraph.paragraph_format.page_break_before:
         pdf.add_page()
@@ -44,7 +45,7 @@ def draw_paragraph(pdf: FPDF, paragraph: Paragraph):
         return
 
     for run in paragraph.runs:
-        text = styles.apply_font(pdf, run.text, run.font)
+        text = styles.apply_font(doc, pdf, run.text, run.font)
         pdf.write(8, text)
     pdf.ln()
 
