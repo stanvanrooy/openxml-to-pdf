@@ -9,7 +9,6 @@ from docx.text.paragraph import Paragraph
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.table import _Cell, Table
-from docx.opc.coreprops import CoreProperties
 from docx.section import Section
 
 from openxml_to_pdf import drawing
@@ -35,8 +34,6 @@ def iter_elements(parent):
 def convert(filename):
     doc = docx.Document(filename)
     pdf = drawing.init(doc)
-    _set_metadata(pdf, doc.core_properties)
-    _set_margin(pdf, doc.sections[0])
     
     for elem in iter_elements(doc):
         if isinstance(elem, Paragraph):
@@ -46,12 +43,6 @@ def convert(filename):
         else:
             raise ValueError("something's not right")
 
-    pdf.output('output.pdf', 'F')
-
-def _set_metadata(pdf: FPDF, properties: CoreProperties):
-    pdf.set_author(properties.author)
-
-def _set_margin(pdf: FPDF, section: Section):
-    pdf.set_top_margin(section.top_margin.pt // 2)
-    pdf.set_right_margin(section.right_margin.pt // 2)
-    pdf.set_left_margin(section.left_margin.pt // 2)
+    out = pdf.output(dest='S')
+    with open('./output.pdf', 'w+') as f:
+        f.write(out)

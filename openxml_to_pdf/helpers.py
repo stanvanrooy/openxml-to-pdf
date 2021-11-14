@@ -35,7 +35,7 @@ def convert_wd_color_index(color: WD_COLOR_INDEX) -> dict:
 def add_font(pdf: FPDF, family: str, style: str):
     """Add a font to the PDF."""
     path = _get_font_path(family, style)
-    pdf.add_font(family, style, path, uni=True)
+    pdf.add_font(family.lower(), style, path, uni=True)
 
 def _get_font_path(family: str, style: str) -> Optional[str]:
     """Use fc-match to get the absolute path to the font family"""
@@ -72,4 +72,3 @@ def _add_style_to_family(family: str, style: str) -> str:
     if 'u' in style:
         family += ':underline'
     return family
-
