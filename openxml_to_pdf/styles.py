@@ -14,12 +14,13 @@ def apply_font(doc: Document, pdf: FPDF, text: str, font: Font) -> str:
 
     default = doc.styles.default(2)
     
-    color = _get_color(default.font.color.rgb) or _get_color(font.color.rgb)
+    color = _get_color(default.font.color.rgb) or _get_color(font.color.rgb) or {'r': 0, 'g': 0, 'b': 0}
     fill = _get_fill(default.font.highlight_color) or _get_fill(font.highlight_color)
     style = _get_style(default.font) or _get_style(font) or ''
-    size = (default.font.size.pt if default.font.size else None) or (font.size.pt if font.size else None) or 12
+
+    size = (default.font.size.pt if default.font.size else None) or (font.size.pt if font.size else None) or 8
     family = (default.font.name or font.name or 'Arial').lower()
-    
+
     try:
         pdf.set_font(family, style, size)
     except RuntimeError:
@@ -33,7 +34,7 @@ def apply_font(doc: Document, pdf: FPDF, text: str, font: Font) -> str:
 
 def _get_color(rgb: Optional[RGBColor]):
     if rgb is None:
-        return { 'r': 0, 'g': 0, 'b': 0 }
+        return None
     return {
         'r': rgb[0],
         'g': rgb[1],

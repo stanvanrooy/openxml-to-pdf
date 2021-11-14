@@ -18,10 +18,10 @@ WIDTH = 210
 HEIGHT = 297
 INCH = 25.4
 
-def init():
-    pdf = FPDF(orientation='P', unit='mm', format='A4')
+def init(doc: Document):
+    page_format = _get_page_format(doc)
+    pdf = FPDF(orientation='P', unit='mm', format=page_format)
     pdf.add_page()
-    pdf.set_font('Times', '', 10.0)
     return pdf
 
 def draw_table(doc: Document, pdf: FPDF, table: Table):
@@ -44,8 +44,13 @@ def draw_paragraph(doc: Document, pdf: FPDF, paragraph: Paragraph):
     if not paragraph.runs:
         return
 
+    default_style = doc.styles.default(1)
     for run in paragraph.runs:
         text = styles.apply_font(doc, pdf, run.text, run.font)
-        pdf.write(8, text)
+        pdf.write(paragraph.paragraph_format.line_spacing or 1, text)
     pdf.ln()
 
+def _get_page_format(doc: Document):
+    section = doc.sections[0]
+    sizes = [section.page_width.mm, section.page_height.mm]
+    return (min(sizes), max(sizes))
