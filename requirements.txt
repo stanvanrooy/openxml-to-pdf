@@ -1,4 +1,4 @@
 fpdf==1.7.2
-lxml==4.6.4
+lxml==4.6.5
 python-docx==0.8.11
 Python-OOXML==0.13
